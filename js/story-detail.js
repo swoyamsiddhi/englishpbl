@@ -45,6 +45,9 @@ function renderStoryDetail(story, index) {
     <div class="story-meta-item">
       <span class="meta-icon">✍️</span> Rabindranath Tagore
     </div>
+    <div class="story-meta-item">
+      <span class="meta-icon">💡</span> ${story.themes[0] || 'Classic Theme'}
+    </div>
   `;
 
     // Story content
@@ -57,8 +60,9 @@ function renderStoryDetail(story, index) {
     </div>
 
     <!-- Key Quote -->
-    <div class="key-quote reveal">
-      <p>${story.keyQuote}</p>
+    <div class="key-quote reveal" id="key-quote-panel">
+      <p id="key-quote-text">${story.keyQuote}</p>
+      <button id="copy-quote-btn" style="position:absolute; top:0.8rem; right:0.8rem; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.3); color:#fff; border-radius:999px; font-size:0.75rem; padding:0.25rem 0.6rem; cursor:pointer;">Copy</button>
     </div>
 
     <!-- Themes -->
@@ -109,4 +113,19 @@ function renderStoryDetail(story, index) {
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
     reveals.forEach(el => observer.observe(el));
+
+    const quoteText = document.getElementById('key-quote-text');
+    const copyBtn = document.getElementById('copy-quote-btn');
+    if (quoteText && copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(quoteText.textContent || '');
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = 'Copy', 1400);
+            } catch (error) {
+                copyBtn.textContent = 'Failed';
+                setTimeout(() => copyBtn.textContent = 'Copy', 1400);
+            }
+        });
+    }
 }

@@ -11,6 +11,7 @@ const STORIES = [
       "Colonial Gothic and its Indian adaptation"
     ],
     keyQuote: "He wants the woman to be a ghost, a skeleton, because that would make his desire romantic rather than merely sexual.",
+    fullStory: "A young man arrives at his uncle's estate and hears the local myth of a skeleton that wanders at night. One evening by moonlight, he sees a pale woman by the river, a widow rumored to have died. Consumed by longing, he imagines her as a supernatural spirit. After a night of poetic terror, he learns she is living flesh: a widow meeting her lover in secret. The real haunting is the social constraints that render desire forbidden.",
     analysis: "Tagore's most Poe-like story, but with a twist that deconstructs the Gothic tradition. The narrator's \"haunting\" is his own erotic imagination—he wants the woman to be a ghost, a skeleton, because that would make his desire romantic rather than merely sexual. The widow's actual situation (clandestine meetings with a lover) is more socially transgressive than any ghost. Tagore suggests that Indian society produces its own Gothic: the real horror is not death but the living death of women denied legitimate pleasure. The story is also about reading—how we interpret signs according to our desires, seeing ghosts where there are only constrained lives."
   },
   {

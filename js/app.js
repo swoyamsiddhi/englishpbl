@@ -1,10 +1,36 @@
 // ===== SHARED NAVIGATION & UTILITIES =====
 
 document.addEventListener('DOMContentLoaded', () => {
+    initPageTransitions();
     initNavbar();
     initScrollReveal();
     initParticles();
+    initBackToTop();
+    initSectionElevations();
 });
+
+function initPageTransitions() {
+    document.body.classList.add('page-transition');
+    requestAnimationFrame(() => {
+        document.body.classList.add('page-transition-visible');
+    });
+
+    document.querySelectorAll('a[href]').forEach(anchor => {
+        const href = anchor.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
+        if (anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+
+        anchor.addEventListener('click', (e) => {
+            const isExternal = /^(https?:\/\/|\/\/)/.test(href) && !href.includes(window.location.host);
+            if (isExternal) return;
+            e.preventDefault();
+            document.body.classList.remove('page-transition-visible');
+            window.setTimeout(() => {
+                window.location.href = href;
+            }, 220);
+        });
+    });
+}
 
 
 function initNavbar() {
@@ -87,4 +113,36 @@ function initParticles() {
         particle.style.width = particle.style.height = (1 + Math.random() * 2) + 'px';
         container.appendChild(particle);
     }
+}
+
+function initBackToTop() {
+    const btn = document.createElement('button');
+    btn.className = 'back-to-top';
+    btn.type = 'button';
+    btn.ariaLabel = 'Back to top';
+    btn.innerHTML = '↑';
+    document.body.appendChild(btn);
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 350);
+    });
+}
+
+function initSectionElevations() {
+    const sections = document.querySelectorAll('.section-header, .story-card');
+    sections.forEach((section, idx) => {
+        section.style.transition = 'transform 0.35s ease, box-shadow 0.35s ease';
+        section.addEventListener('mouseenter', () => {
+            section.style.transform = 'translateY(-3px)';
+            section.style.boxShadow = '0 16px 35px rgba(0,0,0,0.28)';
+        });
+        section.addEventListener('mouseleave', () => {
+            section.style.transform = 'translateY(0)';
+            section.style.boxShadow = '';
+        });
+    });
 }

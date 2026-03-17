@@ -38,6 +38,10 @@
                 1892 and 1895 — each a masterclass in human observation, social critique, and literary art.</p>
             <div class="section-divider"></div>
 
+            <div style="display:flex; justify-content:center; gap:0.5rem; flex-wrap:wrap; margin-top:1rem;">
+                <input id="story-search" type="search" placeholder="Search stories..." style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color:#fff; padding:0.45rem 0.8rem; border-radius:999px; min-width:230px;" />
+                <button id="clear-search" class="view-btn" style="padding:0.45rem 0.9rem;">Clear</button>
+            </div>
             <div class="view-controls">
                 <button class="view-btn active" id="grid-view-btn" aria-label="Grid view">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -57,6 +61,11 @@
                     List
                 </button>
             </div>
+            <div class="filter-controls" style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+                <select id="year-filter" class="view-btn" aria-label="Filter by year" style="border-radius: 999px;">
+                    <option value="all">All Years</option>
+                </select>
+            </div>
         </div>
     </section>
     <section class="stories-container">
@@ -69,7 +78,7 @@
     <footer class="footer">
         <div class="container">
             <p>PBL English Project — Exploring Rabindranath Tagore's Short Stories</p>
-            <p style="margin-top: 0.5rem;">Made with ✦ for English Literature</p>
+            <p style="margin-top: 0.5rem;">Made By Team 2</p>
         </div>
     </footer>
 
