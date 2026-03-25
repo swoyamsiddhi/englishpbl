@@ -718,6 +718,8 @@
     // ── Enter button — iris wipe from button center ───────
     enterBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      // Mark as visited so index.html doesn't redirect back here
+      sessionStorage.setItem('visited', '1');
       // Position iris origin at button center
       const rect = enterBtn.getBoundingClientRect();
       const cx = Math.round(rect.left + rect.width  / 2);

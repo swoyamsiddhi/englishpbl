@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Redirect to landing page on first visit -->
+  <script>
+    if (!sessionStorage.getItem('visited')) {
+      window.location.replace('landing.html');
+    }
+  </script>
   <meta name="description" content="Explore the literary world of Rabindranath Tagore — a curated collection of his short stories with summaries, themes, and in-depth analysis.">
   <title>Tagore's Stories — Exploring the Literary World of Rabindranath Tagore</title>
   <link rel="stylesheet" href="css/style.css">
