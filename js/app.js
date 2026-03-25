@@ -7,7 +7,42 @@ document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initBackToTop();
     initSectionElevations();
+    initFeaturedStory();
 });
+
+function initFeaturedStory() {
+    if (!window.STORIES || !STORIES.length) return;
+
+    const featuredCard = document.querySelector('.featured-story-card');
+    if (!featuredCard) return;
+
+    const storageKey = 'featuredStoryIndex';
+    let index = Number(localStorage.getItem(storageKey));
+
+    if (Number.isNaN(index) || index < 0 || index >= STORIES.length) {
+        index = Math.floor(Math.random() * STORIES.length);
+    }
+
+    const story = STORIES[index];
+    const nextIndex = (index + 1) % STORIES.length;
+    localStorage.setItem(storageKey, String(nextIndex));
+
+    const titleNode = featuredCard.querySelector('h3');
+    const descNode = featuredCard.querySelector('.featured-story-card p');
+    const button = featuredCard.querySelector('a.btn-primary');
+
+    if (titleNode) {
+        titleNode.textContent = `"${story.title}" — ${story.summary.split('. ')[0]}`;
+    }
+    if (descNode) {
+        descNode.textContent = story.summary;
+    }
+    if (button) {
+        button.href = `story.html?id=${story.id}`;
+        button.textContent = 'Read Featured Story';
+    }
+}
+
 
 function initPageTransitions() {
     document.body.classList.add('page-transition');

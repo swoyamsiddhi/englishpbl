@@ -7,9 +7,11 @@ function initStoriesPage() {
     initFilters();
     initSearch();
     renderStories(STORIES);
+    renderTimeline(STORIES);
 }
 
 function renderStories(stories, query = '') {
+    renderTimeline(stories);
     const grid = document.getElementById('stories-grid');
     if (!grid) return;
 
@@ -52,6 +54,36 @@ function getUniqueThemes() {
     return [...new Set(allThemes)].sort((a, b) => a.localeCompare(b));
 }
 
+function renderTimeline(stories) {
+    const timelineList = document.getElementById('timeline-list');
+    if (!timelineList) return;
+
+    const byYear = stories.reduce((acc, story) => {
+        if (!acc[story.year]) acc[story.year] = [];
+        acc[story.year].push(story);
+        return acc;
+    }, {});
+
+    const years = Object.keys(byYear).sort((a, b) => Number(a) - Number(b));
+
+    timelineList.innerHTML = years.map(year => `
+        <div class="timeline-year-block">
+          <div class="timeline-year-marker">
+            <span>${year}</span>
+          </div>
+          <div class="timeline-year-content">
+            ${byYear[year].map(s => `
+              <article class="timeline-story-card">
+                <h4><a href="story.html?id=${s.id}">${s.title}</a></h4>
+                <p>${s.summary.length > 130 ? `${s.summary.slice(0, 130)}...` : s.summary}</p>
+                <div class="timeline-meta"><span>${s.themes[0] || ''}</span><span>${s.year}</span></div>
+              </article>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+}
+
 function initFilters() {
     const yearFilter = document.getElementById('year-filter');
     const grid = document.getElementById('stories-grid');
@@ -92,20 +124,38 @@ function initFilters() {
 function initViewToggle() {
     const gridBtn = document.getElementById('grid-view-btn');
     const listBtn = document.getElementById('list-view-btn');
+    const timelineBtn = document.getElementById('timeline-view-btn');
     const grid = document.getElementById('stories-grid');
+    const storiesContainer = document.querySelector('.stories-container');
+    const timelineSection = document.getElementById('timeline-section');
 
-    if (!gridBtn || !listBtn || !grid) return;
+    if (!gridBtn || !listBtn || !timelineBtn || !grid || !storiesContainer || !timelineSection) return;
+
+    function setActive(target) {
+        gridBtn.classList.remove('active');
+        listBtn.classList.remove('active');
+        timelineBtn.classList.remove('active');
+        target.classList.add('active');
+    }
 
     gridBtn.addEventListener('click', () => {
+        setActive(gridBtn);
         grid.classList.remove('list-view');
-        gridBtn.classList.add('active');
-        listBtn.classList.remove('active');
+        storiesContainer.style.display = 'block';
+        timelineSection.classList.add('hidden');
     });
 
     listBtn.addEventListener('click', () => {
+        setActive(listBtn);
         grid.classList.add('list-view');
-        listBtn.classList.add('active');
-        gridBtn.classList.remove('active');
+        storiesContainer.style.display = 'block';
+        timelineSection.classList.add('hidden');
+    });
+
+    timelineBtn.addEventListener('click', () => {
+        setActive(timelineBtn);
+        storiesContainer.style.display = 'none';
+        timelineSection.classList.remove('hidden');
     });
 }
 

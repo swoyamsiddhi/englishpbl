@@ -60,6 +60,15 @@
                     </svg>
                     List
                 </button>
+                <button class="view-btn" id="timeline-view-btn" aria-label="Timeline view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="2" y="3" width="2" height="2" rx="0.5" />
+                        <rect x="7" y="6" width="2" height="2" rx="0.5" />
+                        <rect x="12" y="9" width="2" height="2" rx="0.5" />
+                        <path d="M3 4h4M8 7h4M13 10h0" stroke="currentColor" stroke-width="1" />
+                    </svg>
+                    Timeline
+                </button>
             </div>
             <div class="filter-controls" style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
                 <select id="year-filter" class="view-btn" aria-label="Filter by year" style="border-radius: 999px;">
@@ -68,6 +77,13 @@
             </div>
         </div>
     </section>
+    <section class="timeline-section hidden" id="timeline-section">
+        <div class="container">
+            <h2 class="section-title" style="color:#f0e6d3; text-align:center;">Stories Timeline (Year-wise)</h2>
+            <div id="timeline-list" class="timeline-list"></div>
+        </div>
+    </section>
+
     <section class="stories-container">
         <div class="container">
             <div class="stories-grid reveal-children" id="stories-grid">

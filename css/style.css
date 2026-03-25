@@ -916,6 +916,119 @@ p {
   margin-top: 0.5rem;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.timeline-section {
+  padding: 2rem 0 2rem;
+}
+
+.timeline-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.timeline-year-block {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+}
+
+.timeline-year-marker {
+  flex-shrink: 0;
+  position: relative;
+  padding-right: 1rem;
+}
+
+.timeline-year-marker::before {
+  content: '';
+  position: absolute;
+  top: 0.4rem;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15);
+}
+
+.timeline-year-marker::after {
+  content: '';
+  position: absolute;
+  top: 1.2rem;
+  right: 11px;
+  width: 2px;
+  height: calc(100% - 1.2rem);
+  background: rgba(201, 168, 76, 0.25);
+}
+
+.timeline-year-marker span {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--gold);
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.timeline-year-content {
+  flex: 1;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.timeline-story-card {
+  background: rgba(26, 30, 52, 0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.timeline-story-card:hover {
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.4), 0 0 18px rgba(201, 168, 76, 0.2);
+  transform: translateY(-2px);
+}
+
+.timeline-story-card h4 {
+  font-size: 1.04rem;
+  margin-bottom: 0.35rem;
+}
+
+.timeline-story-card h4 a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.timeline-story-card h4 a:hover {
+  color: var(--gold);
+}
+
+.timeline-story-card p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.timeline-meta {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  color: var(--gold-light);
+  font-size: 0.8rem;
+}
+
+.timeline-meta span {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 14px;
+  padding: 0.2rem 0.55rem;
+}
+
 /* ===== STORY DETAIL PAGE ===== */
 .story-detail-hero {
   padding-top: calc(var(--nav-height) + 80px);
