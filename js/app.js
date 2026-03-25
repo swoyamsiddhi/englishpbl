@@ -103,10 +103,10 @@ function initNavbar() {
 }
 
 function highlightActiveNav() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = window.location.pathname.split('/').pop() || 'home.html';
     document.querySelectorAll('.nav-links a').forEach(link => {
         const href = link.getAttribute('href');
-        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+        if (href === currentPage || (currentPage === '' && href === 'home.html')) {
             link.classList.add('active');
         } else if (currentPage === 'story.html' && href === 'stories.html') {
             link.classList.add('active');

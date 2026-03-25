@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore the literary world of Rabindranath Tagore — a curated collection of his short stories with summaries, themes, and in-depth analysis.">
+  <title>Tagore's Stories — Exploring the Literary World of Rabindranath Tagore</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Entry overlay — fades out on arrival from landing page */
+    #entry-overlay {
+      position: fixed;
+      inset: 0;
+      background: #0a0a0f;
+      z-index: 999;
+      opacity: 1;
+      pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s;
+    }
+    #entry-overlay.done { opacity: 0; }
+  </style>
+</head>
+<body>
+  <!-- Entry transition overlay -->
+  <div id="entry-overlay"></div>
+
+  <!-- Particles -->
+  <div class="particles"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="home.html" class="nav-logo">
+        <span class="logo-icon">✦</span> Tagore's World
+      </a>
+      <ul class="nav-links">
+        <li><a href="home.html">Home</a></li>
+        <li><a href="about.html">About Tagore</a></li>
+        <li><a href="stories.html">The Stories</a></li>
+      </ul>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="assets/hero-bg.png" alt="Tagore by the river at dusk">
+    </div>
+    <div class="hero-content">
+      <h1 class="hero-title">The Stories of <span class="highlight">Rabindranath Tagore</span></h1>
+      <p class="hero-description">Journey through thirteen masterful short stories that illuminate the human condition — from the depths of patriarchal oppression to the heights of childhood wonder.</p>
+      <div class="hero-cta">
+        <a href="stories.html" class="btn btn-primary">Explore the Stories</a>
+        <a href="about.html" class="btn btn-outline">About Tagore</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Story Highlight -->
+  <section class="featured-story">
+    <div class="container">
+      <div class="featured-story-card reveal">
+        <div class="featured-headline">Featured Story</div>
+        <h3>"Skeleton" — A haunted legend of desire and knowledge</h3>
+        <p>A young man on a country estate becomes obsessed with a local skeleton legend, only to discover the truth is more human and more dangerous than he imagined.</p>
+        <a href="story.html?id=skeleton" class="btn btn-primary">Read Featured Story</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Section -->
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">What You'll Discover</span>
+        <h2 class="section-title">Stories That Shaped Modern Literature</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="featured-grid reveal-children">
+        <div class="featured-card">
+          <span class="card-icon">📖</span>
+          <h3>In-Depth Summaries</h3>
+          <p>Detailed plot summaries of each story, capturing the essence of Tagore's narrative artistry and the worlds he creates.</p>
+        </div>
+        <div class="featured-card">
+          <span class="card-icon">🔍</span>
+          <h3>Thematic Analysis</h3>
+          <p>Explore recurring themes — patriarchy, nationalism, caste, desire, childhood — woven through Tagore's literary tapestry.</p>
+        </div>
+        <div class="featured-card">
+          <span class="card-icon">💬</span>
+          <h3>Key Quotes</h3>
+          <p>Standout lines and passages that distill the philosophical and emotional power of each story into memorable moments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro Quote Section -->
+  <section class="intro-section">
+    <div class="container">
+      <div class="intro-content">
+        <div class="intro-text reveal">
+          <h2>Why Tagore's Short Stories Matter</h2>
+          <p><strong>Because they make us feel history and humanity at once.</strong> Tagore's 1890s stories are not only beautiful narratives — they are ethical experiments, asking readers to witness class, caste, desire, and the cost of moral choices in real time.</p>
+          <ul style="list-style: disc; margin-left: 1rem; margin-bottom: 1rem; color:#f0e6d3;">
+            <li><strong>Living social critique:</strong> Each story turns personal feeling into political insight, showing how power operates in daily lives.</li>
+            <li><strong>Timeless emotional truth:</strong> From first love to grief, Tagore writes with a tenderness that still pierces in our modern moment.</li>
+            <li><strong>Literary craft:</strong> His compressed scenes and open endings invite active reading and discussion—not passive consumption.</li>
+          </ul>
+          <p class="intro-cta">Read with curiosity: these stories are short, but they stay with you.</p>
+          <a href="stories.html" class="btn btn-primary" style="margin-top: 1rem;">Read the Stories →</a>
+        </div>
+        <div class="intro-quote reveal">
+          <blockquote>"The butterfly counts not months but moments, and has time enough."</blockquote>
+          <cite>— Rabindranath Tagore</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>PBL English Project — Exploring Rabindranath Tagore's Short Stories</p>
+      <p style="margin-top: 0.5rem;">Made By Team 2</p>
+      <p>Guided by: Dr.J.Karisma</p>
+    </div>
+  </footer>
+
+  <script src="js/stories-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Fade out the entry overlay shortly after page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.getElementById('entry-overlay').classList.add('done');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
