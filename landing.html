@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Enter the world of Rabindranath Tagore — a cinematic journey through literature.">
+  <title>Tagore's World — Enter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --bg: #0a0a0f;
+    }
+
+    html {
+      /* The scroll height controls how many frames we scrub through */
+      scroll-behavior: auto; /* disable smooth so frame-by-frame is accurate */
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'Lora', serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Sticky canvas wrapper ── */
+    #film-strip {
+      /* Tall enough to scroll through 240 frames at ~8px per frame */
+      height: 4800px; /* 240 frames × 20px each — slower scrub */
+      position: relative;
+    }
+
+    #canvas-wrap {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #filmCanvas {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* ── Cinematic vignette overlay ── */
+    #canvas-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center,
+        transparent 40%,
+        rgba(0,0,0,0.55) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ── Grain texture ── */
+    #canvas-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 3;
+      animation: grain 0.8s steps(1) infinite;
+    }
+
+    @keyframes grain {
+      0%,100% { transform: translate(0,0); }
+      10%      { transform: translate(-2%,-3%); }
+      20%      { transform: translate(3%,2%); }
+      30%      { transform: translate(-1%,4%); }
+      40%      { transform: translate(4%,-1%); }
+      50%      { transform: translate(-3%,3%); }
+      60%      { transform: translate(2%,-4%); }
+      70%      { transform: translate(-4%,1%); }
+      80%      { transform: translate(1%,3%); }
+      90%      { transform: translate(3%,-2%); }
+    }
+
+    /* ── Scroll hint arrow ── */
+    #scroll-hint {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 20;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+      color: rgba(201,168,76,0.7);
+      font-family: 'Lora', serif;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    #scroll-hint.hidden { opacity: 0; }
+
+    #scroll-hint .arrow {
+      width: 24px;
+      height: 24px;
+      border-right: 2px solid var(--gold);
+      border-bottom: 2px solid var(--gold);
+      transform: rotate(45deg);
+      animation: bounce 1.5s infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50%       { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* ── Cinematic progress bar ── */
+    #progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      z-index: 30;
+      transition: width 0.05s linear;
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    /* ── Frame counter (cinematic feel) ── */
+    #frame-counter {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-family: 'Lora', serif;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: rgba(201,168,76,0.4);
+      z-index: 20;
+      opacity: 1;
+      transition: opacity 0.4s;
+    }
+
+    /* ── Tagline overlay ── */
+    #tagline-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+      pointer-events: none;
+      opacity: 0;
+      /* Pre-promote to GPU layer so showing it costs no layout/paint */
+      transform: translateZ(0);
+      will-change: opacity;
+      transition: opacity 0.6s ease;
+    }
+
+    #tagline-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Trigger zoomIn only when overlay becomes visible */
+    #tagline-overlay.visible .tagline-text {
+      animation: zoomIn 1s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .tagline-bg {
+      position: absolute;
+      inset: 0;
+      /* Plain semi-opaque bg — no backdrop-filter (too expensive during canvas draw) */
+      background: rgba(0,0,0,0.72);
+    }
+
+    .tagline-text {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+      opacity: 0;
+      /* Own GPU layer so animation doesn’t cause repaint */
+      transform: translateZ(0);
+      will-change: transform, opacity;
+    }
+
+    .tagline-eyebrow {
+      font-family: 'Lora', serif;
+      font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+      letter-spacing: 6px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: none;
+    }
+
+    .tagline-main {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.2rem, 6vw, 5.5rem);
+      font-weight: 800;
+      font-style: italic;
+      color: #fff;
+      line-height: 1.1;
+      text-shadow:
+        0 0 60px rgba(201,168,76,0.4),
+        0 2px 40px rgba(0,0,0,0.8);
+      margin-bottom: 1rem;
+    }
+
+    .tagline-main span {
+      color: var(--gold);
+      display: block;
+    }
+
+    .tagline-sub {
+      font-family: 'Lora', serif;
+      font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+      color: rgba(240,230,211,0.7);
+      letter-spacing: 1px;
+      font-style: italic;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Enter Button — Premium ── */
+    .enter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 1.05rem 3rem;
+      background: transparent;
+      border: 1.5px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Lora', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      /* Own compositing layer */
+      transform: translateZ(0);
+      will-change: transform;
+      transition:
+        color     0.45s cubic-bezier(0.16,1,0.3,1),
+        transform 0.45s cubic-bezier(0.16,1,0.3,1),
+        box-shadow 0.45s ease;
+      /* Idle glow pulse */
+      animation: btnPulse 3s ease-in-out infinite;
+      animation-play-state: var(--btn-pulse-play, running);
+    }
+
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 0 0px rgba(201,168,76,0); }
+      50%       { box-shadow: 0 0 18px rgba(201,168,76,0.3); }
+    }
+
+    /* Gold fill — slides in from left */
+    .enter-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-102%);
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* Shimmer glint — diagonal light sweep */
+    .enter-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255,255,255,0.35) 50%,
+        transparent 70%
+      );
+      transform: skewX(-20deg);
+      transition: left 0.55s ease;
+      pointer-events: none;
+    }
+
+    .enter-btn:hover {
+      color: #0a0a0f;
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 36px rgba(201,168,76,0.35);
+      animation: none; /* stop idle pulse while hovered */
+    }
+
+    .enter-btn:hover::before {
+      transform: translateX(0);
+    }
+
+    .enter-btn:hover::after {
+      left: 125%; /* shimmer sweeps across */
+    }
+
+    .enter-btn:active {
+      transform: translateY(-1px) scale(0.99);
+    }
+
+    .enter-btn .btn-label,
+    .enter-btn .arrow-icon {
+      position: relative; /* sit above ::before fill */
+      z-index: 1;
+    }
+
+    .enter-btn .arrow-icon {
+      font-size: 1.1rem;
+      display: inline-block;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .enter-btn:hover .arrow-icon {
+      transform: translateX(6px);
+    }
+
+    @keyframes zoomIn {
+      0%   { opacity: 0; transform: scale(0.88); }
+      60%  { opacity: 1; transform: scale(1.02); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeUp {
+      0%   { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Loading screen ── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: opacity 0.8s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: var(--gold);
+      font-style: italic;
+      margin-bottom: 2rem;
+      letter-spacing: 2px;
+    }
+
+    .loader-bar-wrap {
+      width: 240px;
+      height: 1px;
+      background: rgba(201,168,76,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loader-bar {
+      height: 100%;
+      background: var(--gold);
+      width: 0%;
+      box-shadow: 0 0 8px var(--gold);
+      transition: width 0.1s linear;
+    }
+
+    .loader-text {
+      margin-top: 1rem;
+      font-family: 'Lora', serif;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: rgba(201,168,76,0.5);
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════
+       MOBILE RESPONSIVE
+    ══════════════════════════════════════ */
+
+    /* Tablet & small desktop */
+    @media (max-width: 768px) {
+      /* Shorter scroll so mobile users don't over-scroll */
+      #film-strip {
+        height: 3000px;
+      }
+
+      /* Tagline text */
+      .tagline-text {
+        padding: 1.2rem 1rem;
+      }
+
+      .tagline-eyebrow {
+        font-size: 0.65rem;
+        letter-spacing: 4px;
+        margin-bottom: 1rem;
+      }
+
+      .tagline-main {
+        font-size: clamp(1.8rem, 8vw, 3rem);
+        margin-bottom: 0.8rem;
+      }
+
+      .tagline-sub {
+        font-size: 0.82rem;
+        margin-bottom: 2rem;
+        letter-spacing: 0.5px;
+      }
+
+      /* Button */
+      .enter-btn {
+        padding: 0.9rem 2rem;
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        gap: 0.6rem;
+      }
+
+      .enter-btn .arrow-icon {
+        font-size: 1rem;
+      }
+
+      /* Frame counter — move to bottom-left away from notch */
+      #frame-counter {
+        top: auto;
+        bottom: 1.2rem;
+        right: 1rem;
+        font-size: 0.6rem;
+      }
+
+      /* Scroll hint */
+      #scroll-hint {
+        bottom: 2rem;
+        font-size: 0.65rem;
+      }
+
+      #scroll-hint .arrow {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    /* Phone portrait */
+    @media (max-width: 480px) {
+      #film-strip {
+        height: 2400px;
+      }
+
+      .tagline-main {
+        font-size: clamp(1.5rem, 9vw, 2.2rem);
+        line-height: 1.15;
+      }
+
+      .tagline-sub {
+        display: none; /* hide quote on very small screens to reduce clutter */
+      }
+
+      .enter-btn {
+        padding: 0.85rem 1.6rem;
+        letter-spacing: 2px;
+        font-size: 0.7rem;
+      }
+
+      /* Loader bar full-width on tiny screens */
+      .loader-bar-wrap {
+        width: 80vw;
+      }
+    }
+
+    /* Allow natural touch scrolling on the canvas area */
+    #canvas-wrap {
+      touch-action: pan-y;
+    }
+
+    /* ── Page transition — iris radial wipe ── */
+    #page-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      pointer-events: none;
+      /* clip-path iris: starts as tiny circle, expands to cover */
+      background: #0a0a0f;
+      clip-path: circle(0% at 50% 80%);
+      transition: clip-path 0.75s cubic-bezier(0.76,0,0.24,1);
+    }
+
+    #page-transition.active {
+      pointer-events: auto;
+      clip-path: circle(150% at 50% 80%);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="loader-title">Tagore's World</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loaderBar"></div>
+    </div>
+    <div class="loader-text">Loading frames…</div>
+  </div>
+
+  <!-- Page transition curtain -->
+  <div id="page-transition"></div>
+
+  <!-- Scroll hint -->
+  <div id="scroll-hint">
+    <span>Scroll</span>
+    <div class="arrow"></div>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Frame counter -->
+  <div id="frame-counter">001 / 240</div>
+
+  <!-- Film strip section -->
+  <section id="film-strip">
+    <div id="canvas-wrap">
+      <canvas id="filmCanvas"></canvas>
+    </div>
+  </section>
+
+  <!-- Tagline overlay -->
+  <div id="tagline-overlay">
+    <div class="tagline-bg"></div>
+    <div class="tagline-text">
+      <div class="tagline-eyebrow" id="tagEyebrow">A PBL English Project</div>
+      <h1 class="tagline-main">
+        Ready to Dive into<br>
+        <span>Tagore's World?</span>
+      </h1>
+      <p class="tagline-sub">"The butterfly counts not months but moments, and has time enough."</p>
+      <a href="index.html" id="enterBtn" class="enter-btn">
+        <span class="btn-label">Enter the World</span>
+        <span class="arrow-icon">→</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // ── Configuration ──────────────────────────────────────
+    const TOTAL_FRAMES = 240;
+    const FRAME_PATH = (n) =>
+      `pics/ezgif-frame-${String(n).padStart(3, '0')}.jpg`;
+
+    // At what scroll progress (0–1) does the tagline appear?
+    const TAGLINE_TRIGGER = 0.82;
+
+    // ── Touch device detection ─────────────────────────────
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (isTouch) {
+      // Idle glow pulse uses :hover indirectly — disable on touch to save GPU
+      document.documentElement.style.setProperty('--btn-pulse-play', 'paused');
+    }
+
+    // ── DOM refs ───────────────────────────────────────────
+    const canvas      = document.getElementById('filmCanvas');
+    const ctx         = canvas.getContext('2d');
+    const loader      = document.getElementById('loader');
+    const loaderBar   = document.getElementById('loaderBar');
+    const scrollHint  = document.getElementById('scroll-hint');
+    const progressBar = document.getElementById('progress-bar');
+    const frameCounter= document.getElementById('frame-counter');
+    const taglineEl   = document.getElementById('tagline-overlay');
+    const tagEyebrow  = document.getElementById('tagEyebrow');
+    const enterBtn    = document.getElementById('enterBtn');
+    const pageTrans   = document.getElementById('page-transition');
+
+    // ── Frame cache ────────────────────────────────────────
+    const images = new Array(TOTAL_FRAMES);
+    let loadedCount = 0;
+    let currentFrame = 0;
+    let taglineShown = false;
+
+    // ── Canvas sizing ──────────────────────────────────────
+    function resizeCanvas() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawFrame(currentFrame);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // ── Draw a frame ───────────────────────────────────────
+    function drawFrame(index) {
+      const img = images[index];
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+
+      const cw = canvas.width, ch = canvas.height;
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+
+      // object-fit: cover — fill canvas, crop to center
+      const scale = Math.max(cw / iw, ch / ih);
+      const dw = iw * scale, dh = ih * scale;
+      const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
+
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(img, dx, dy, dw, dh);
+    }
+
+    // ── Scroll → frame mapping ─────────────────────────────
+    function getScrollProgress() {
+      const strip = document.getElementById('film-strip');
+      const scrollY   = window.scrollY;
+      const maxScroll = strip.scrollHeight - window.innerHeight;
+      return Math.min(Math.max(scrollY / maxScroll, 0), 1);
+    }
+
+    // Smoothed frame index for lerp animation
+    let smoothFrame = 0;
+    let targetFrame  = 0;
+    let animLoopRunning = false;
+    let rafId = null;
+    let lastFrame = -1;
+
+    // Continuous animation loop for smooth lerp
+    function animLoop() {
+      animLoopRunning = true;
+      const diff = targetFrame - smoothFrame;
+      if (Math.abs(diff) > 0.1) {
+        smoothFrame += diff * 0.12; // lerp factor — lower = smoother/slower
+        const idx = Math.round(Math.min(Math.max(smoothFrame, 0), TOTAL_FRAMES - 1));
+        if (idx !== lastFrame) {
+          currentFrame = idx;
+          lastFrame = idx;
+          drawFrame(idx);
+          frameCounter.textContent =
+            String(idx + 1).padStart(3, '0') + ' / ' + String(TOTAL_FRAMES).padStart(3, '0');
+        }
+        requestAnimationFrame(animLoop);
+      } else {
+        animLoopRunning = false;
+      }
+    }
+
+    function onScroll() {
+      const progress = getScrollProgress();
+
+      // Update progress bar immediately (no lerp needed)
+      progressBar.style.width = (progress * 100) + '%';
+
+      // Scroll hint
+      if (progress > 0.05) {
+        scrollHint.classList.add('hidden');
+      } else {
+        scrollHint.classList.remove('hidden');
+      }
+
+      // Set the lerp target
+      targetFrame = Math.min(progress * TOTAL_FRAMES, TOTAL_FRAMES - 1);
+
+      // Tagline trigger (based on raw progress, not smoothed frame)
+      if (progress >= TAGLINE_TRIGGER && !taglineShown) {
+        showTagline();
+      } else if (progress < TAGLINE_TRIGGER - 0.02 && taglineShown) {
+        hideTagline();
+      }
+
+      // Kick off lerp render loop if not already running
+      if (!animLoopRunning) {
+        requestAnimationFrame(animLoop);
+      }
+    }
+
+    function showTagline() {
+      taglineShown = true;
+      taglineEl.classList.add('visible');
+      // Stop lerp loop — canvas is at its final frame, no more drawing needed
+      targetFrame = smoothFrame;
+      // Freeze the grain animation so GPU isn’t animating canvas + CSS simultaneously
+      document.getElementById('canvas-wrap').style.setProperty('--grain-play', 'paused');
+      const canvasWrap = document.getElementById('canvas-wrap');
+      canvasWrap.style.animation = 'none';
+      // Stagger eyebrow text in
+      setTimeout(() => {
+        tagEyebrow.style.animation = 'fadeUp 0.6s ease forwards';
+      }, 200);
+    }
+
+    function hideTagline() {
+      taglineShown = false;
+      taglineEl.classList.remove('visible');
+      tagEyebrow.style.animation = 'none';
+      tagEyebrow.style.opacity = '0';
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ── Enter button — iris wipe from button center ───────
+    enterBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Position iris origin at button center
+      const rect = enterBtn.getBoundingClientRect();
+      const cx = Math.round(rect.left + rect.width  / 2);
+      const cy = Math.round(rect.top  + rect.height / 2);
+      pageTrans.style.clipPath = `circle(0% at ${cx}px ${cy}px)`;
+      pageTrans.style.transition = 'none';
+      // Force reflow so the reset takes effect before animating
+      pageTrans.offsetWidth;
+      pageTrans.style.transition = 'clip-path 0.75s cubic-bezier(0.76,0,0.24,1)';
+      pageTrans.style.clipPath = `circle(150% at ${cx}px ${cy}px)`;
+      pageTrans.style.pointerEvents = 'auto';
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 780);
+    });
+
+    // ── Preload all frames ─────────────────────────────────
+    function preload() {
+      // Load first frame immediately then batch-load the rest
+      const onImageLoad = (img, idx) => {
+        loadedCount++;
+        const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+        loaderBar.style.width = pct + '%';
+
+        // Draw frame 0 immediately
+        if (idx === 0) drawFrame(0);
+
+        if (loadedCount === TOTAL_FRAMES) {
+          onAllLoaded();
+        }
+      };
+
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        const img = new Image();
+        const idx = i;
+        img.onload  = () => onImageLoad(img, idx);
+        img.onerror = () => { loadedCount++; }; // skip broken frames
+        img.src = FRAME_PATH(i + 1); // frames are 001-indexed
+        images[i] = img;
+      }
+    }
+
+    function onAllLoaded() {
+      // Fade out loader
+      loader.classList.add('hidden');
+      setTimeout(() => { loader.style.display = 'none'; }, 900);
+
+      // Draw first frame
+      drawFrame(0);
+    }
+
+    // Start preloading
+    preload();
+  </script>
+</body>
+</html>

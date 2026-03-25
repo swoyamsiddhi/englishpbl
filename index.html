@@ -6,8 +6,23 @@
   <meta name="description" content="Explore the literary world of Rabindranath Tagore — a curated collection of his short stories with summaries, themes, and in-depth analysis.">
   <title>Tagore's Stories — Exploring the Literary World of Rabindranath Tagore</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Entry overlay — fades out on arrival from landing page */
+    #entry-overlay {
+      position: fixed;
+      inset: 0;
+      background: #0a0a0f;
+      z-index: 999;
+      opacity: 1;
+      pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s;
+    }
+    #entry-overlay.done { opacity: 0; }
+  </style>
 </head>
 <body>
+  <!-- Entry transition overlay -->
+  <div id="entry-overlay"></div>
 
   <!-- Particles -->
   <div class="particles"></div>
@@ -121,5 +136,15 @@
 
   <script src="js/stories-data.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // Fade out the entry overlay shortly after page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.getElementById('entry-overlay').classList.add('done');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
