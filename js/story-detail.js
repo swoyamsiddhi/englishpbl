@@ -73,6 +73,12 @@ function renderStoryDetail(story, index) {
       </ul>
     </div>
 
+    <!-- Story -->
+    <div class="story-section reveal">
+      <div class="story-section-label">Story</div>
+      <p>${story.story}</p>
+    </div>
+
     <!-- Analysis -->
     <div class="story-section reveal">
       <div class="story-section-label">Critical Analysis</div>

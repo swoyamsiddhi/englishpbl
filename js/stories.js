@@ -20,6 +20,9 @@ function renderStories(stories, query = '') {
 
     grid.innerHTML = stories.map(story => {
         const highlightedTitle = query ? story.title.replace(new RegExp(query, 'gi'), match => `<mark style="background:#f9e29d;color:#1a1a1a;border-radius:3px;">${match}</mark>`) : story.title;
+        const storyString = story.story ? story.story.toString().replace(/\s+/g, ' ').trim() : '';
+        const storyExcerpt = storyString ? (storyString.length > 180 ? `${storyString.slice(0, 180)}...` : storyString) : '';
+
         return `
         <a href="story.html?id=${story.id}" class="story-card" id="card-${story.id}">
           <div class="story-card-header">
@@ -27,6 +30,7 @@ function renderStories(stories, query = '') {
             <span class="story-card-year">${story.year}</span>
           </div>
           <p class="story-card-excerpt">${story.summary}</p>
+          ${storyExcerpt ? `<p class="story-card-full">${storyExcerpt}</p>` : ''}
           <div class="story-card-themes">
             ${story.themes.slice(0, 2).map(t => `<span class="theme-tag">${t}</span>`).join('')}
           </div>
