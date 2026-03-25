@@ -79,8 +79,11 @@ function renderStoryDetail(story, index) {
       <div class="story-text">
         ${story.story ? story.story
           .replace(/\t/g, ' ')
-          .split(/\n\s*\n+/)
-          .map(paragraph => `<p>${paragraph.trim()}</p>`)
+          .replace(/\r\n/g, '\n')
+          .split(/\n\s*\n/)
+          .map(paragraph => paragraph.trim())
+          .filter(p => p.length > 0)
+          .map(paragraph => `<p>${paragraph}</p>`)
           .join('')
           : '<p>Full story text not available.</p>'}
       </div>
